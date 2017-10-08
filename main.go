@@ -35,7 +35,7 @@ func record() {
 func main() {
 
 	log.Printf("starting")
-	run("modprobe", "v4l2_common")
+	run("modprobe", "bcm2835-v4l2")
 	run("df -h")
 	go record()
 	http.HandleFunc("/", h)
