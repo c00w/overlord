@@ -22,6 +22,7 @@ func run(arg ...string) {
 func main() {
 
 	run("modprobe", "v4l2_common")
+	run("lsb_release", "-a")
 	run("go", "env")
 	http.HandleFunc("/", h)
 	log.Fatal(http.ListenAndServe(":80", nil))
