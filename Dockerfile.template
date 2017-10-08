@@ -1,7 +1,7 @@
 FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006
 ENV INITSYSTEM on
 WORKDIR /go/src/github.com/c00w/overlord
-RUN apt-get update && apt-get install ffmpeg && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install libav-tools && rm -rf /var/lib/apt/lists/*
 ADD main.go .
 RUN go install
 RUN rm -rf /go/src/*
