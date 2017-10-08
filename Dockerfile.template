@@ -1,11 +1,11 @@
 FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006
 WORKDIR /go/src/github.com/c00w/overlord
-ADD main.go .
-RUN go install
 RUN curl -SLO https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-32bit-static.tar.xz \
     && tar -xvf ffmpeg-release-armhf-32bit-static.tar.xz \
     && cp ffmpeg-3.3.4-armhf-32bit-static/ffmpeg /usr/bin \
     && rm -f ffmpeg-release-armhf-32bit-static.tar.xz \
     && rm -rf ffmpeg-3.3.4-armhf-32bit-static
+ADD main.go .
+RUN go install
 CMD /go/bin/overlord
 
