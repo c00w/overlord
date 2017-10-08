@@ -8,7 +8,7 @@ import (
 )
 
 func h(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello World! temp")
+	fmt.Fprint(w, "Hello World!")
 	log.Print(r)
 }
 
@@ -22,6 +22,7 @@ func main() {
 
 	log.Printf("starting")
 	run("modprobe", "v4l2_common")
+	run("cat", "/proc/cpuinfo")
 	run("ffmpeg")
 	http.HandleFunc("/", h)
 	log.Fatal(http.ListenAndServe(":80", nil))
