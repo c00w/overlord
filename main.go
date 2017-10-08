@@ -43,11 +43,10 @@ func prune() {
 		}
 		size := int64(0)
 		for _, fi := range fis {
-			log.Printf("stat result: %+v", fi)
 			size += fi.Size()
 		}
 		log.Printf("Total /data size is %d", size)
-		if size > 20*1024*1024*1024 {
+		if size > 20*1024*1024 {
 			target := "/data/" + fis[0].Name()
 			log.Printf("Pruning %q", target)
 			if err := os.Remove(target); err != nil {
