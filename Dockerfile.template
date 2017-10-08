@@ -1,10 +1,10 @@
 FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006
 WORKDIR /go/src/github.com/c00w/overlord
-RUN curl -SLO https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-32bit-static.tar.xz \
-    && tar -xvf ffmpeg-release-armhf-32bit-static.tar.xz \
-    && cp ffmpeg-3.3.4-armhf-32bit-static/ffmpeg /usr/bin \
-    && rm -f ffmpeg-release-armhf-32bit-static.tar.xz \
-    && rm -rf ffmpeg-3.3.4-armhf-32bit-static
+RUN curl -SLO https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armel-32bit-static.tar.xz \
+    && tar -xvf ffmpeg-release-armel-32bit-static.tar.xz \
+    && cp ffmpeg-3.3.4-armel-32bit-static/ffmpeg /usr/bin \
+    && rm -f ffmpeg-release-armel-32bit-static.tar.xz \
+    && rm -rf ffmpeg-3.3.4-armel-32bit-static
 CMD /go/bin/overlord
 ENV INITSYSTEM on
 ADD main.go .
