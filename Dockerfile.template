@@ -1,7 +1,10 @@
 FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006
 ENV INITSYSTEM on
 WORKDIR /go/src/github.com/c00w/overlord
-RUN apt-get update && apt-get install libav-tools && rm -rf /var/lib/apt/lists/*
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7638D0442B90D010
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8B48AD6246925553
+RUN echo 'deb http://httpredir.debian.org/debian jessie-backports main contrib non-free' > /etc/apt/sources.list.d/jessie-backports.list
+RUN apt-get update && apt-get -t jessie-backports install ffmpeg && rm -rf /var/lib/apt/lists/*
 ADD main.go .
 RUN go install
 RUN rm -rf /go/src/*
