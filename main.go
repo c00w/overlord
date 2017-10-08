@@ -65,10 +65,8 @@ func prune() {
 }
 
 func main() {
-
 	log.Printf("starting")
 	run("modprobe", "bcm2835-v4l2")
-	run("df", "-h")
 	go record()
 	go prune()
 	http.HandleFunc("/", h)
