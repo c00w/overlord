@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
+	"time"
 )
 
 func h(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +27,6 @@ func record() {
 		"-input_format", "h264",
 		"-framerate", "30",
 		"-video_size", "1920x1080",
-		"-t", "61",
 		"-i", "/dev/video0",
 		"-c", "copy",
 		"-f", "segment",
@@ -32,12 +34,36 @@ func record() {
 		"-strftime", "1", "/data/%s.mkv")
 }
 
+func prune() {
+	for range time.NewTicker(30 * time.Second).C {
+		fis, err := ioutil.ReadDir("/data")
+		if err != nil {
+			log.Printf("Error stating /data: %v", err)
+			continue
+		}
+		size := int64(0)
+		for _, fi := range fis {
+			log.Printf("stat result: %+v", fi)
+			size += fi.Size()
+		}
+		log.Printf("Total /data size is %d", size)
+		if size > 20*1024*1024*1024 {
+			target := "/data/" + fis[0].Name()
+			log.Printf("Pruning %q", target)
+			if err := os.Remove(target); err != nil {
+				log.Printf("Error removing %s: %v", target, err)
+			}
+		}
+	}
+}
+
 func main() {
 
 	log.Printf("starting")
 	run("modprobe", "bcm2835-v4l2")
-	run("df -h")
+	run("df", "-h")
 	go record()
+	go prune()
 	http.HandleFunc("/", h)
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
