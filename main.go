@@ -44,8 +44,8 @@ func prune() {
 		}
 
 		// Make sure we delete newest entry
-		sort.Slice(fis, func(i, j os.FileInfo) bool {
-			return i.Name() < j.Name()
+		sort.Slice(fis, func(i, j int) bool {
+			return fis[i].Name() < fis[j].Name()
 		})
 
 		size := int64(0)
