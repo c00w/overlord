@@ -3,6 +3,7 @@ WORKDIR /go/src/github.com/c00w/overlord
 RUN apk add --no-cache ffmpeg
 ADD main.go .
 RUN go install
-CMD /go/bin/overlord
+CMD go env && /go/bin/overlord
+RUN go env
 
 
