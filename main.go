@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"sort"
 	"time"
 )
 
@@ -41,12 +42,19 @@ func prune() {
 			log.Printf("Error stating /data: %v", err)
 			continue
 		}
+
+		// Make sure we delete newest entry
+		sort.Slice(fis, func(i, j os.FileInfo) bool {
+			return i.Name() < j.Name()
+		})
+
 		size := int64(0)
 		for _, fi := range fis {
+			log.Printf("File %q size %d", fi.Name(), fi.Size())
 			size += fi.Size()
 		}
 		log.Printf("Total /data size is %d", size)
-		if size > 20*1024*1024 {
+		if size > 200*1024*1024 {
 			target := "/data/" + fis[0].Name()
 			log.Printf("Pruning %q", target)
 			if err := os.Remove(target); err != nil {
