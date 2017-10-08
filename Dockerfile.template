@@ -1,7 +1,7 @@
-FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006
+FROM resin/%%RESIN_MACHINE_NAME%%-alpine-golang:1.9-slim-20171005
 ENV INITSYSTEM on
 WORKDIR /go/src/github.com/c00w/overlord
-RUN apt-get update && apt-get install libav libav-tools  && rm -rf /var/lib/apt/lists/*
+RUN  apk add --no-cache ffmpeg
 ADD main.go .
 RUN go install
 RUN rm -rf /go/src/*
