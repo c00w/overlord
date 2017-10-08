@@ -24,7 +24,6 @@ func main() {
 	log.Printf("starting")
 	run("modprobe", "v4l2_common")
 	run("ffmpeg")
-	run("avconv")
 	http.HandleFunc("/", h)
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
