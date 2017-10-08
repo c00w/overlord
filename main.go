@@ -13,7 +13,6 @@ func h(w http.ResponseWriter, r *http.Request) {
 }
 
 func run(arg ...string) {
-
 	out, err := exec.Command(arg[0], arg[1:]...).CombinedOutput()
 	log.Printf("Ran %v, err = %v", arg, err)
 	log.Printf("Output ----\n %s", string(out))
