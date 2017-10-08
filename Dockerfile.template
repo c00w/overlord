@@ -5,7 +5,7 @@ RUN curl -SLO https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-32b
     && cp ffmpeg-3.3.4-armhf-32bit-static/ffmpeg /usr/bin \
     && rm -f ffmpeg-release-armhf-32bit-static.tar.xz \
     && rm -rf ffmpeg-3.3.4-armhf-32bit-static
+CMD /go/bin/overlord
 ADD main.go .
 RUN go install
-CMD /go/bin/overlord
 
