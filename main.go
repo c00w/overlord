@@ -54,7 +54,7 @@ func prune() {
 			size += fi.Size()
 		}
 		log.Printf("Total /data size is %d", size)
-		if size > 200*1024*1024 {
+		if size > 800*1024*1024 {
 			target := "/data/" + fis[0].Name()
 			log.Printf("Pruning %q", target)
 			if err := os.Remove(target); err != nil {
