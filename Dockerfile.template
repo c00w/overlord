@@ -1,12 +1,18 @@
-FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006
+FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006 as codestep
 WORKDIR /go/src/github.com/c00w/overlord
+ADD main.go .
+RUN go install
+
+FROM resin/%%RESIN_MACHINE_NAME%%-buildpack-deps:jessie-curl-20171006 as downstep
 RUN curl -SLO https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armel-32bit-static.tar.xz \
     && tar -xvf ffmpeg-release-armel-32bit-static.tar.xz \
     && cp ffmpeg-3.3.4-armel-32bit-static/ffmpeg /usr/bin \
     && rm -f ffmpeg-release-armel-32bit-static.tar.xz \
     && rm -rf ffmpeg-3.3.4-armel-32bit-static
+
+FROM resin/%%RESIN_MACHINE_NAME%%-debian:jessie-20171006
 CMD /go/bin/overlord
 ENV INITSYSTEM on
-ADD main.go .
-RUN go install
+COPY --from=codestep /go/bin/overlord /go/bin/overlord
+COPY --from=downstep /usr/bin/ffmpeg /usr/bin/ffmpeg
 
