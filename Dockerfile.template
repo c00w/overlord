@@ -2,10 +2,11 @@ FROM resin/%%RESIN_MACHINE_NAME%%-alpine-golang:1.9-slim-20171005
 ENV INITSYSTEM on
 WORKDIR /go/src/github.com/c00w/overlord
 RUN apk add --no-cache ffmpeg
-RUN apk info
+RUN apk info -s
 ADD main.go .
 RUN go install
 RUN rm -rf /go/src/*
+RUN rm -rf /usr/local/go/*
 CMD /go/bin/overlord
 
 
