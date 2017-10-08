@@ -1,7 +1,7 @@
 FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006
 ENV INITSYSTEM on
 WORKDIR /go/src/github.com/c00w/overlord
-RUN apt-get install ffmpeg
+RUN apt-get install avconv
 ADD main.go .
 RUN go install
 CMD /go/bin/overlord
