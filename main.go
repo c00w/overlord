@@ -83,6 +83,7 @@ func prune() {
 			if err := os.Remove(target); err != nil {
 				log.Printf("Error removing %s: %v", target, err)
 			}
+			size -= fis[0].Size()
 			fis = fis[1:]
 		}
 	}
