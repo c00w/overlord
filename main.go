@@ -71,8 +71,8 @@ func prune() {
 				log.Printf("Unable to extract timestamp from %q", fi.Name())
 				continue
 			}
-			if o := time.Since(time.Unix(n)); o > 15*time.Minute {
-				log.Printf("File %q has been around for %v", o)
+			if o := time.Since(time.Unix(i, 0)); o > 15*time.Minute {
+				log.Printf("File %q has been around for %v", fi.Name(), o)
 			}
 		}
 		if size > 800*1024*1024 {
