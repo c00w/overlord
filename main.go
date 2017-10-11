@@ -9,6 +9,8 @@ import (
 	"os/exec"
 	"sort"
 	"time"
+
+	"github.com/armon/circbuf"
 )
 
 func h(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +27,8 @@ func run(arg ...string) {
 func record() {
 	log.Print("Running FFMPEG")
 	for {
-		run("ffmpeg",
+		b, _ := circbuf.NewBuffer(10 * 1024 * 1024)
+		c := exec.Command("ffmpeg",
 			"-f", "v4l2",
 			"-input_format", "h264",
 			"-framerate", "30",
@@ -35,7 +38,12 @@ func record() {
 			"-f", "segment",
 			"-segment_time", "60",
 			"-strftime", "1", "/data/%s.mkv")
+		c.Stdout = b
+		c.Stderr = b
+		err := c.Run()
 		log.Print("FFMPEG exited?")
+		log.Printf("Exit code: %v", err)
+		log.Printf("Log buffer: %s", b.String())
 	}
 }
 
@@ -58,7 +66,6 @@ func prune() {
 		}
 		if size > 800*1024*1024 {
 			target := "/data/" + fis[0].Name()
-			log.Printf("Pruning %q", target)
 			if err := os.Remove(target); err != nil {
 				log.Printf("Error removing %s: %v", target, err)
 			}

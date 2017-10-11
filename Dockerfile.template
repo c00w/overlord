@@ -7,6 +7,7 @@ RUN curl -SLO https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armel-32b
 
 FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006 as codestep
 WORKDIR /go/src/github.com/c00w/overlord
+RUN go get github.com/armon/circbuf
 ADD main.go .
 RUN go install
 
