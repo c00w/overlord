@@ -1,8 +1,0 @@
-destination: /go/bin/
-port: 22
-before: env GOOS=linux GOARCH=arm go build
-local_resinos: {}
-uuid: 2078525e74662df8a3b52db26fc14044
-ignore:
-  - .git
-  - node_modules/
