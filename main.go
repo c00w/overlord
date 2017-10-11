@@ -8,6 +8,8 @@ import (
 	"os"
 	"os/exec"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/armon/circbuf"
@@ -63,6 +65,15 @@ func prune() {
 		size := int64(0)
 		for _, fi := range fis {
 			size += fi.Size()
+			n := strings.TrimSuffix(fi.Name(), ".mkv")
+			i, err := strconv.ParseInt(n, 10, 64)
+			if err != nil {
+				log.Printf("Unable to extract timestamp from %q", fi.Name())
+				continue
+			}
+			if o := time.Since(time.Unix(n)); o > 15*time.Minute {
+				log.Printf("File %q has been around for %v", o)
+			}
 		}
 		if size > 800*1024*1024 {
 			target := "/data/" + fis[0].Name()
