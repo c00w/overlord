@@ -75,11 +75,15 @@ func prune() {
 				log.Printf("File %q has been around for %v", fi.Name(), o)
 			}
 		}
-		if size > 800*1024*1024 {
+		for {
+			if size < 800*1024*1024 {
+				break
+			}
 			target := "/data/" + fis[0].Name()
 			if err := os.Remove(target); err != nil {
 				log.Printf("Error removing %s: %v", target, err)
 			}
+			fis = fis[1:]
 		}
 	}
 }
