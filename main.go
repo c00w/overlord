@@ -23,16 +23,20 @@ func run(arg ...string) {
 }
 
 func record() {
-	run("ffmpeg",
-		"-f", "v4l2",
-		"-input_format", "h264",
-		"-framerate", "30",
-		"-video_size", "1920x1080",
-		"-i", "/dev/video0",
-		"-c", "copy",
-		"-f", "segment",
-		"-segment_time", "60",
-		"-strftime", "1", "/data/%s.mkv")
+	log.Print("Running FFMPEG")
+	for {
+		run("ffmpeg",
+			"-f", "v4l2",
+			"-input_format", "h264",
+			"-framerate", "30",
+			"-video_size", "1920x1080",
+			"-i", "/dev/video0",
+			"-c", "copy",
+			"-f", "segment",
+			"-segment_time", "60",
+			"-strftime", "1", "/data/%s.mkv")
+		log.Print("FFMPEG exited?")
+	}
 }
 
 func prune() {
@@ -52,7 +56,6 @@ func prune() {
 		for _, fi := range fis {
 			size += fi.Size()
 		}
-		log.Printf("Total /data size is %d, %d files present", size, len(fis))
 		if size > 800*1024*1024 {
 			target := "/data/" + fis[0].Name()
 			log.Printf("Pruning %q", target)
