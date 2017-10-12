@@ -46,6 +46,7 @@ func record() {
 		log.Print("FFMPEG exited?")
 		log.Printf("Exit code: %v", err)
 		log.Printf("Log buffer: %s", b.String())
+		run("df", "-h")
 	}
 }
 
@@ -72,7 +73,8 @@ func prune() {
 				continue
 			}
 			if o := time.Since(time.Unix(i, 0)); o > 15*time.Minute {
-				log.Printf("File %q has been around for %v", fi.Name(), o)
+				run("df", "-h")
+				log.Fatalf("File %q has been around for %v", fi.Name(), o)
 			}
 		}
 		for {
