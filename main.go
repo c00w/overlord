@@ -40,7 +40,7 @@ func record() {
 			"-i", "/dev/video0",
 			"-c", "copy",
 			"-f", "segment",
-			"-segment_time", "10",
+			"-segment_time", "2",
 			"-strftime", "1", "/data/raw/%s.mkv")
 		c.Stdout = b
 		c.Stderr = b
@@ -53,7 +53,7 @@ func record() {
 }
 
 func encrypt() {
-	for range time.NewTicker(10 * time.Second).C {
+	for range time.NewTicker(time.Second).C {
 		fis, err := ioutil.ReadDir("/data/raw")
 		if err != nil {
 			log.Fatalf("Error stating /data: %v", err)
@@ -92,15 +92,15 @@ func encrypt() {
 		if err := ioutil.WriteFile("/data/encrypted/"+fis[0].Name(), out, 0777); err != nil {
 			log.Fatalf("Error writing to new file: %v", err)
 		}
-		if err := os.Remove("/data/raw" + fis[0].Name()); err != nil {
-			log.Fatalf("Error writing encrypted file")
+		if err := os.Remove("/data/raw/" + fis[0].Name()); err != nil {
+			log.Fatalf("Error deleting encrypted file")
 		}
 
 	}
 }
 
 func prune() {
-	for range time.NewTicker(10 * time.Second).C {
+	for range time.NewTicker(time.Second).C {
 		fis, err := ioutil.ReadDir("/data/encrypted")
 		if err != nil {
 			log.Printf("Error stating /data: %v", err)
