@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -13,6 +14,7 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
+	"golang.org/x/crypto/chacha20poly1305"
 )
 
 func h(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +41,7 @@ func record() {
 			"-c", "copy",
 			"-f", "segment",
 			"-segment_time", "10",
-			"-strftime", "1", "/data/%s.mkv")
+			"-strftime", "1", "/data/raw/%s.mkv")
 		c.Stdout = b
 		c.Stderr = b
 		err := c.Run()
@@ -50,9 +52,56 @@ func record() {
 	}
 }
 
+func encrypt() {
+	for range time.NewTicker(10 * time.Second).C {
+		fis, err := ioutil.ReadDir("/data/raw")
+		if err != nil {
+			log.Fatalf("Error stating /data: %v", err)
+			continue
+		}
+		if len(fis) < 2 {
+			continue
+		}
+
+		// Make sure we handle the newest entry
+		sort.Slice(fis, func(i, j int) bool {
+			return fis[i].Name() < fis[j].Name()
+		})
+
+		k := make([]byte, 32)
+		if _, err := rand.Read(k); err != nil {
+			log.Fatalf("Unable to read random data: %v", err)
+		}
+
+		aed, err := chacha20poly1305.New(k)
+		if err != nil {
+			log.Fatalf("Unable to create AED: %v", err)
+		}
+		nonce := make([]byte, aed.NonceSize())
+		if _, err := rand.Read(nonce); err != nil {
+			log.Fatalf("Unable to read random data: %v", err)
+		}
+
+		b, err := ioutil.ReadFile("/data/raw/" + fis[0].Name())
+		if err != nil {
+			log.Fatalf("Unable to read: %v", err)
+		}
+
+		out := aed.Seal(nil, nonce, b, nil)
+
+		if err := ioutil.WriteFile("/data/encrypted/"+fis[0].Name(), out, 0777); err != nil {
+			log.Fatalf("Error writing to new file: %v", err)
+		}
+		if err := os.Remove("/data/raw" + fis[0].Name()); err != nil {
+			log.Fatalf("Error writing encrypted file")
+		}
+
+	}
+}
+
 func prune() {
 	for range time.NewTicker(10 * time.Second).C {
-		fis, err := ioutil.ReadDir("/data")
+		fis, err := ioutil.ReadDir("/data/encrypted")
 		if err != nil {
 			log.Printf("Error stating /data: %v", err)
 			continue
@@ -95,7 +144,14 @@ func prune() {
 func main() {
 	log.Printf("starting")
 	run("modprobe", "bcm2835-v4l2")
+	if err := os.Mkdir("/data/raw", 0777); err != nil {
+		log.Fatalf("Unabel to make /data/raw: %v", err)
+	}
+	if err := os.Mkdir("/data/encrypted", 0777); err != nil {
+		log.Fatalf("Unabel to make /data/encrypted: %v", err)
+	}
 	go record()
+	go encrypt()
 	go prune()
 	http.HandleFunc("/", h)
 	log.Fatal(http.ListenAndServe(":80", nil))
