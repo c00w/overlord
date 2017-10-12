@@ -38,7 +38,7 @@ func record() {
 			"-i", "/dev/video0",
 			"-c", "copy",
 			"-f", "segment",
-			"-segment_time", "60",
+			"-segment_time", "10",
 			"-strftime", "1", "/data/%s.mkv")
 		c.Stdout = b
 		c.Stderr = b
@@ -51,7 +51,7 @@ func record() {
 }
 
 func prune() {
-	for range time.NewTicker(30 * time.Second).C {
+	for range time.NewTicker(10 * time.Second).C {
 		fis, err := ioutil.ReadDir("/data")
 		if err != nil {
 			log.Printf("Error stating /data: %v", err)
@@ -79,7 +79,7 @@ func prune() {
 			}
 		}
 		for {
-			if size < 800*1024*1024 {
+			if size < 200*1024*1024 {
 				break
 			}
 			target := "/data/" + fis[0].Name()
