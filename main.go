@@ -144,10 +144,10 @@ func prune() {
 func main() {
 	log.Printf("starting")
 	run("modprobe", "bcm2835-v4l2")
-	if err := os.Mkdir("/data/raw", 0777); err != nil {
+	if err := os.MkdirAll("/data/raw", 0777); err != nil {
 		log.Fatalf("Unabel to make /data/raw: %v", err)
 	}
-	if err := os.Mkdir("/data/encrypted", 0777); err != nil {
+	if err := os.MkdirAll("/data/encrypted", 0777); err != nil {
 		log.Fatalf("Unabel to make /data/encrypted: %v", err)
 	}
 	go record()
