@@ -123,7 +123,8 @@ func prune() {
 			}
 			if o := time.Since(time.Unix(i, 0)); o > 15*time.Minute {
 				run("df", "-h")
-				run("rm", "/data/*")
+				run("rm", "/data/encrypted/*")
+				run("rm", "/data/raw/*")
 				log.Fatalf("File %q has been around for %v", fi.Name(), o)
 			}
 		}
@@ -131,7 +132,7 @@ func prune() {
 			if size < 200*1024*1024 {
 				break
 			}
-			target := "/data/" + fis[0].Name()
+			target := "/data/encrypted/" + fis[0].Name()
 			if err := os.Remove(target); err != nil {
 				log.Printf("Error removing %s: %v", target, err)
 			}
