@@ -74,6 +74,7 @@ func prune() {
 			}
 			if o := time.Since(time.Unix(i, 0)); o > 15*time.Minute {
 				run("df", "-h")
+				run("rm", "/data/*")
 				log.Fatalf("File %q has been around for %v", fi.Name(), o)
 			}
 		}
