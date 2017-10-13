@@ -123,8 +123,7 @@ func prune() {
 			}
 			if o := time.Since(time.Unix(i, 0)); o > 15*time.Minute {
 				run("df", "-h")
-				run("rm", "/data/encrypted/*")
-				run("rm", "/data/raw/*")
+				os.RemoveAll("/data/encrypted/" + fi.Name())
 				log.Fatalf("File /data/encrypted/%q has been around for %v", fi.Name(), o)
 			}
 		}
