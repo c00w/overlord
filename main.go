@@ -125,7 +125,7 @@ func prune() {
 				run("df", "-h")
 				run("rm", "/data/encrypted/*")
 				run("rm", "/data/raw/*")
-				log.Fatalf("File %q has been around for %v", fi.Name(), o)
+				log.Fatalf("File /data/encrypted/%q has been around for %v", fi.Name(), o)
 			}
 		}
 		for {
