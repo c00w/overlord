@@ -15,7 +15,7 @@ RUN go install
 FROM resin/%%RESIN_MACHINE_NAME%%-debian:jessie-20171006
 CMD /go/bin/overlord
 ENV INITSYSTEM on
-ADD 10-restart.conf /etc/systemd/systemd/foobar.service/d10-restart.conf
+ADD 10-restart.conf /etc/systemd/systemd/foobar.service/10-restart.conf
 COPY --from=downstep /usr/bin/ffmpeg /usr/bin/ffmpeg
 COPY --from=codestep /go/bin/overlord /go/bin/overlord
 
