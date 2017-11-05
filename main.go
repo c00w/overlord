@@ -121,10 +121,12 @@ func prune() {
 				log.Printf("Unable to extract timestamp from %q", fi.Name())
 				continue
 			}
-			if o := time.Since(time.Unix(i, 0)); o > 15*time.Minute {
-				run("df", "-h")
-				os.RemoveAll("/data/encrypted/" + fi.Name())
-				log.Fatalf("File /data/encrypted/%q has been around for %v", fi.Name(), o)
+			if o := time.Since(time.Unix(i, 0)); o > 1*time.Hour {
+				log.Printf("File /data/encrypted/%s has been around for %v", fi.Name(), o)
+				target := "/data/encrypted/" + fi.Name()
+				if err := os.Remove(target); err != nil {
+					log.Printf("Error removing %s: %v", target, err)
+				}
 			}
 		}
 		for {
