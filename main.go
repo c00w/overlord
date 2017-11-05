@@ -145,16 +145,26 @@ func prune() {
 
 func main() {
 	log.Printf("starting")
-	run("modprobe", "bcm2835-v4l2")
-	if err := os.MkdirAll("/data/raw", 0777); err != nil {
-		log.Fatalf("Unabel to make /data/raw: %v", err)
+	env := os.Getenv("DEPLOY_ROLE")
+	log.Printf("Env = %q", env)
+	if env == "watcher" {
+
+		run("modprobe", "bcm2835-v4l2")
+		if err := os.MkdirAll("/data/raw", 0777); err != nil {
+			log.Fatalf("Unable to make /data/raw: %v", err)
+		}
+		if err := os.MkdirAll("/data/encrypted", 0777); err != nil {
+			log.Fatalf("Unable to make /data/encrypted: %v", err)
+		}
+		go record()
+		go encrypt()
+		go prune()
+		http.HandleFunc("/", h)
+		log.Fatal(http.ListenAndServe(":80", nil))
 	}
-	if err := os.MkdirAll("/data/encrypted", 0777); err != nil {
-		log.Fatalf("Unabel to make /data/encrypted: %v", err)
+	if env == "storeauth" {
+		http.HandleFunc("/", h)
+		log.Fatal(http.ListenAndServe(":80", nil))
 	}
-	go record()
-	go encrypt()
-	go prune()
-	http.HandleFunc("/", h)
-	log.Fatal(http.ListenAndServe(":80", nil))
+	log.Fatalf("Unrecognized env %q", env)
 }
