@@ -1,18 +1,18 @@
-FROM resin/%%RESIN_MACHINE_NAME%%-buildpack-deps:jessie-curl-20171006 as downstep
+FROM resin/%%RESIN_MACHINE_NAME%%-buildpack-deps:jessie-curl as downstep
 RUN curl -SLO https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armel-32bit-static.tar.xz \
     && tar -xvf ffmpeg-release-armel-32bit-static.tar.xz \
     && cp ffmpeg-3.3.4-armel-32bit-static/ffmpeg /usr/bin \
     && rm -f ffmpeg-release-armel-32bit-static.tar.xz \
     && rm -rf ffmpeg-3.3.4-armel-32bit-static
 
-FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim-20171006 as codestep
+FROM resin/%%RESIN_MACHINE_NAME%%-golang:1.9-slim as codestep
 WORKDIR /go/src/github.com/c00w/overlord
 RUN go get github.com/armon/circbuf
 RUN go get golang.org/x/crypto/chacha20poly1305
 ADD main.go .
 RUN go install
 
-FROM resin/%%RESIN_MACHINE_NAME%%-debian:jessie-20171006
+FROM resin/%%RESIN_MACHINE_NAME%%-debian:jessie
 CMD /go/bin/overlord
 ENV INITSYSTEM on
 ADD 10-restart.conf /etc/systemd/system/launch.service.d/10-restart.conf
