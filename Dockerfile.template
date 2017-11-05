@@ -1,6 +1,6 @@
 FROM resin/%%RESIN_MACHINE_NAME%%-buildpack-deps:jessie-curl as downstep
-RUN apt-get update
-    && apt-get install xz-utils
+RUN apt-get update \
+    && apt-get install xz-utils \
     && curl -SLO https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armel-32bit-static.tar.xz \
     && tar -xvf ffmpeg-release-armel-32bit-static.tar.xz \
     && cp ffmpeg-3.4-armel-32bit-static/ffmpeg /usr/bin \
